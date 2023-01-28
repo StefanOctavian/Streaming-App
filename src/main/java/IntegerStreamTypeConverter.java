@@ -1,7 +1,7 @@
 import com.opencsv.bean.AbstractBeanField;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 
-public class IntegerStreamTypeConverter extends AbstractBeanField {
+public class IntegerStreamTypeConverter extends AbstractBeanField<Stream, Integer> {
     @Override
     protected Stream.Type convert(String value) throws CsvDataTypeMismatchException {
         try {
