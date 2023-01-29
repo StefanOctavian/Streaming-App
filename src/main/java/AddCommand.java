@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class AddCommand extends Command {
     public AddCommand(CommandData data) {
         super(data);
@@ -11,6 +13,7 @@ public class AddCommand extends Command {
             .setGenre(genre)
             .setLength(length)
             .setName(name)
+            .setStreamerId(data.getId())
             .build();
         AppManager.getInstance().addStream(stream);
     }
@@ -18,17 +21,18 @@ public class AddCommand extends Command {
     @Override
     public void execute() {
         // get the data from the command
-        String[] args = data.getArgs();
-        if (args.length < 5) {
+        List<String> args = data.getArgs();
+        System.out.println("Add command: " + String.join("&", args));
+        if (args.size() < 5) {
             System.out.println("Invalid command");
             return;
         }
 
-        int streamType = Integer.parseInt(args[0]);
-        int streamId = Integer.parseInt(args[1]);
-        int streamGenre = Integer.parseInt(args[2]);
-        long streamLength = Long.parseLong(args[3]);
-        String streamName = args[4];
+        int streamType = Integer.parseInt(args.get(0));
+        int streamId = Integer.parseInt(args.get(1));
+        int streamGenre = Integer.parseInt(args.get(2));
+        long streamLength = Long.parseLong(args.get(3));
+        String streamName = args.get(4);
 
         addStream(streamType, streamId, streamGenre, streamLength, streamName);
     }

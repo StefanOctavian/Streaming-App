@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,7 +8,7 @@ import java.util.Map;
 public class AppManager {
     private static AppManager instance = null;
     private static Map<Integer, Streamer> streamers = new HashMap<>();
-    private static List<Stream> streams = new ArrayList<>();
+    private static Map<Integer, Stream> streams = new HashMap<>();
     private static Map<Integer, User> users = new HashMap<>();
     private static Deque<String> commands = new LinkedList<>();
 
@@ -35,12 +34,29 @@ public class AppManager {
         return users.get(id);
     }
 
+    class CorruptedStreamException extends RuntimeException {
+        public CorruptedStreamException(String message) {
+            super("Dirty or corrupted stream data: " + message);
+        }
+    }
+
     public void addStream(Stream stream) {
-        streams.add(stream);
+        Streamer streamer = streamers.get(stream.getStreamerId());
+        if (streamer == null)
+            throw new CorruptedStreamException(
+                "Streamer with id " + stream.getStreamerId() + " does not exist"
+            );
+        streams.put(stream.getId(), stream);
+        streamer.addStream(stream);
     }
 
     public void addStreams(List<Stream> newStreams) {
-        streams.addAll(newStreams);
+        for (Stream stream : newStreams)
+            this.addStream(stream);
+    }
+
+    public Stream getStream(int id) {
+        return streams.get(id);
     }
 
     public void addStreamer(Streamer streamer) {
@@ -86,7 +102,7 @@ public class AppManager {
             
             switch (data.getName()) {
                 case "ADD" -> command = new AddCommand(data);
-                // case "LIST" -> command = new ListCommand(data);
+                case "LIST" -> command = new ListCommand(data);
                 // case "DELETE" -> command = new DeleteCommand(data);
                 // case "LISTEN" -> command = new ListenCommand(data);
                 // case "RECCOMEND" -> command = new RecommendCommand(data);

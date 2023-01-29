@@ -1,16 +1,19 @@
+import java.util.ArrayList;
 import java.util.List;
 
-import com.opencsv.bean.CsvBindAndSplitByPosition;
-import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvBindAndSplitByName;
+import com.opencsv.bean.CsvBindByName;
 
-public class User {
-    @CsvBindByPosition(position = 0)
+public class User implements Listable {
+    @CsvBindByName(column = "id")
     private int id;
-    @CsvBindByPosition(position = 1)
+    @CsvBindByName(column = "name")
     private String name;
-    @CsvBindAndSplitByPosition(position = 2, elementType = Integer.class, splitOn = " ")
+    @CsvBindAndSplitByName(column = "streams", elementType = Integer.class, splitOn = " ")
     private List<Integer> streams;
     
+    public User() {}
+
     public User(int id, String name, List<Integer> streams) {
         this.id = id;
         this.name = name;
@@ -27,5 +30,18 @@ public class User {
 
     public List<Integer> getStreams() {
         return streams;
+    }
+
+    @Override
+    public void list() {
+        AppManager manager = AppManager.getInstance();
+        List<Stream> streamList = new ArrayList<>();
+        for (int streamId : this.streams) {
+            Stream stream = manager.getStream(streamId);
+            if (stream != null)
+                streamList.add(stream);
+        }
+        JSONWriter writer = new JSONWriter();
+        writer.writeToStdout(streamList);
     }
 }

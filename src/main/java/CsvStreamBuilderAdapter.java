@@ -1,33 +1,33 @@
-import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvBindByName;
 
 public class CsvStreamBuilderAdapter extends StreamBuilder {
-    @CsvBindByPosition(position = 0)
-    private int typeAsInt;
-    @CsvBindByPosition(position = 1)
-    private int id;
-    @CsvBindByPosition(position = 2)
-    private int genreAsInt;
-    @CsvBindByPosition(position = 3)
-    private int streamerId;
-    @CsvBindByPosition(position = 4)
-    private long length;
-    @CsvBindByPosition(position = 5)
-    private long dateAdded;
-    @CsvBindByPosition(position = 6)
-    private String name;
-    @CsvBindByPosition(position = 7)
-    private long numStreams;
+    @CsvBindByName(column = "streamType")
+    private int csvType;
+    @CsvBindByName(column = "id")
+    private int csvId;
+    @CsvBindByName(column = "streamGenre")
+    private int csvGenre;
+    @CsvBindByName(column = "streamerId")
+    private int csvStreamerId;
+    @CsvBindByName(column = "length")
+    private long csvLength;
+    @CsvBindByName(column = "dateAdded")
+    private long csvDateAdded;
+    @CsvBindByName(column = "name")
+    private String csvName;
+    @CsvBindByName(column = "noOfStreams")
+    private long csvNumStreams;
 
     @Override
     public Stream build() {
-        super.setType(typeAsInt);
-        super.setId(id);
-        super.setStreamerId(streamerId);
-        super.setGenre(genreAsInt);
-        super.setLength(length);
-        super.setDateAdded(dateAdded);
-        super.setName(name);
-        super.setNumStreams(numStreams);
+        super.setType(csvType);
+        super.setId(csvId);
+        super.setStreamerId(csvStreamerId);
+        super.setGenre(csvGenre);
+        super.setLength(csvLength);
+        super.setDateAdded(csvDateAdded);
+        super.setName(csvName);
+        super.setNumStreams(csvNumStreams);
 
         return super.build();
     }

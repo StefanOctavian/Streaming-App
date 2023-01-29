@@ -1,3 +1,12 @@
+import java.time.Instant;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({"id", "name", "streamerName", "noOfListenings", "length", "dateAdded"})
 public class Stream {
     private final int id;
     private final Type type;
@@ -65,30 +74,46 @@ public class Stream {
         return id;
     }
 
+    @JsonIgnore
     public Type getType() {
         return type;
     }
 
+    @JsonIgnore
     public Genre getGenre() {
         return genre;
     }
 
+    @JsonIgnore
     public int getStreamerId() {
         return streamerId;
+    }
+
+    @JsonProperty("streamerName")
+    public String getStreamerName() {
+        AppManager appManager = AppManager.getInstance();
+        return appManager.getStreamer(streamerId).getName();
+    }
+
+    @JsonProperty("length")
+    public String getLengthString() {
+        return String.format("%02d:%02d", (length / 60), (length % 60));
     }
 
     public long getLength() {
         return length;
     }
 
-    public long getDateAdded() {
-        return dateAdded;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    public Date getDateAdded() {
+        return Date.from(Instant.ofEpochSecond(dateAdded));
     }
 
     public String getName() {
         return name;
     }
 
+    @JsonProperty("noOfListenings")
     public long getNumStreams() {
         return numStreams;
     }
@@ -99,5 +124,12 @@ public class Stream {
 
     public void addStream() {
         ++numStreams;
+    }
+
+    @Override
+    public String toString() {
+        return "Stream [id=" + id + ", type=" + type + ", genre=" + genre + 
+        ", streamerId=" + streamerId + ", length=" + length + ", dateAdded=" + 
+        dateAdded + ", name=" + name + ", numStreams=" + numStreams + "]";
     }
 }

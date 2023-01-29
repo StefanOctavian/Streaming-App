@@ -1,6 +1,8 @@
-public class SimpleReadStrategy implements CsvReadStrategy {
+import java.util.List;
+
+public class SimpleReadStrategy<B> implements CsvReadStrategy<B, B> {
     @Override
-    public <B> void addBeans(List<B> beans) {
-        AppManager.getInstance().addUsers((List<User>) beans);
+    public List<B> construct(List<B> beans) {
+        return beans;
     }
 }

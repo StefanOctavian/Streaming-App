@@ -1,14 +1,23 @@
-import com.opencsv.bean.CsvBindByPosition;
-import com.opencsv.bean.CsvCustomBindByPosition;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Streamer {
-    @CsvBindByPosition(position = 0)
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+
+public class Streamer implements Listable {
+    @CsvBindByName(column = "id")
     private int id;
-    @CsvBindByPosition(position = 1)
+    @CsvBindByName(column = "name")
     private String name;
-    @CsvCustomBindByPosition(position = 2, converter = IntegerStreamTypeConverter.class)
+    @CsvCustomBindByName(
+        column = "streamerType", 
+        converter = IntegerStreamTypeConverter.class
+    )
     private Stream.Type type;
 
+    private List<Stream> streams = new ArrayList<>();
+
+    public Streamer() {}
     public Streamer(int id, String name, Stream.Type type) {
         this.id = id;
         this.name = name;
@@ -25,5 +34,15 @@ public class Streamer {
 
     public Stream.Type getType() {
         return type;
+    }
+
+    public void addStream(Stream stream) {
+        streams.add(stream);
+    }
+
+    @Override
+    public void list() {
+        JSONWriter writer = new JSONWriter();
+        writer.writeToStdout(this.streams);
     }
 }
