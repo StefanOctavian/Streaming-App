@@ -22,7 +22,6 @@ public class AddCommand extends Command {
     public void execute() {
         // get the data from the command
         List<String> args = data.getArgs();
-        System.out.println("Add command: " + String.join("&", args));
         if (args.size() < 5) {
             System.out.println("Invalid command");
             return;

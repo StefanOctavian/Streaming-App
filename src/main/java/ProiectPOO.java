@@ -55,14 +55,14 @@ public class ProiectPOO {
     }
 
     public static void main(String[] args) {
-        String input = "inputs2/";
-        String test = "test2/";
-        args = new String[] { 
-            input + "streamers.csv", 
-            input + "streams.csv", 
-            input + "users.csv", 
-            test + "commands.txt"
-        };
+        // String input = "inputs1/";
+        // String test = "test2/";
+        // args = new String[] { 
+        //     input + "streamers.csv", 
+        //     input + "streams.csv", 
+        //     input + "users.csv", 
+        //     test + "commands.txt"
+        // };
         if (args == null) {
             System.out.println("Nothing to read here");
             return;
