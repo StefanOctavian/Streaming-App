@@ -36,6 +36,10 @@ public class Streamer implements Listable {
         return type;
     }
 
+    public List<Stream> getStreams() {
+        return streams;
+    }
+
     public void addStream(Stream stream) {
         streams.add(stream);
     }
@@ -44,5 +48,9 @@ public class Streamer implements Listable {
     public void list() {
         JSONWriter writer = new JSONWriter();
         writer.writeToStdout(this.streams);
+    }
+
+    public void removeStream(Stream stream) {
+        streams.remove(stream);
     }
 }

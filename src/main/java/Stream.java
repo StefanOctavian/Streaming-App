@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"id", "name", "streamerName", "noOfListenings", "length", "dateAdded"})
-public class Stream {
+@JsonPropertyOrder({ "id", "name", "streamerName", "noOfListenings", "length", "dateAdded" })
+public class Stream implements Comparable<Stream> {
     private final int id;
     private final Type type;
     private final Genre genre;
@@ -19,9 +19,10 @@ public class Stream {
 
     public enum Type {
         MUSIC, PODCAST, AUDIOBOOK;
-        
+
         public static final int COUNT = 3;
         private static final Type[] VALUES = Type.values();
+
         public static Type fromInt(int i) {
             return VALUES[i - 1];
         }
@@ -30,9 +31,10 @@ public class Stream {
     public interface Genre {
         enum Music implements Genre {
             POP, LATIN, HOUSE, DANCE, TRAP;
-            
+
             public static final int COUNT = 5;
             private static final Music[] VALUES = Music.values();
+
             public static Music fromInt(int i) {
                 return VALUES[i - 1];
             }
@@ -40,9 +42,10 @@ public class Stream {
 
         enum Podcast implements Genre {
             DOCUMENTARY, CELEBRITIES, TECH;
-            
+
             public static final int COUNT = 3;
             private static final Podcast[] VALUES = Podcast.values();
+
             public static Podcast fromInt(int i) {
                 return VALUES[i - 1];
             }
@@ -50,9 +53,10 @@ public class Stream {
 
         enum Audiobook implements Genre {
             FICTION, PERSONAL_DEVELOPMENT, CHILDREN;
-            
+
             public static final int COUNT = 3;
             private static final Audiobook[] VALUES = Audiobook.values();
+
             public static Audiobook fromInt(int i) {
                 return VALUES[i - 1];
             }
@@ -97,6 +101,10 @@ public class Stream {
 
     @JsonProperty("length")
     public String getLengthString() {
+        if (length >= 3600)
+            return String.format("%02d:%02d:%02d",
+                (length / 3600), (length % 3600) / 60, (length % 60)
+            );
         return String.format("%02d:%02d", (length / 60), (length % 60));
     }
 
@@ -122,14 +130,36 @@ public class Stream {
         this.name = name;
     }
 
-    public void addStream() {
+    public void incNumStreams() {
         ++numStreams;
     }
 
     @Override
     public String toString() {
-        return "Stream [id=" + id + ", type=" + type + ", genre=" + genre + 
-        ", streamerId=" + streamerId + ", length=" + length + ", dateAdded=" + 
-        dateAdded + ", name=" + name + ", numStreams=" + numStreams + "]";
+        return "Stream [id=" + id + ", type=" + type + ", genre=" + genre +
+                ", streamerId=" + streamerId + ", length=" + length + ", dateAdded=" +
+                dateAdded + ", name=" + name + ", numStreams=" + numStreams + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Stream other = (Stream) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int compareTo(Stream o) {
+        return Integer.compare(id, o.id);
     }
 }

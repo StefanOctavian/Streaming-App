@@ -10,14 +10,30 @@ public class User implements Listable {
     @CsvBindByName(column = "name")
     private String name;
     @CsvBindAndSplitByName(column = "streams", elementType = Integer.class, splitOn = " ")
-    private List<Integer> streams;
+    private List<Integer> streamIds;
+    private List<Stream> streams;
     
     public User() {}
 
-    public User(int id, String name, List<Integer> streams) {
+    public User(int id, String name, List<Stream> streams) {
         this.id = id;
         this.name = name;
         this.streams = streams;
+    }
+
+    // This method is called after the CSV file is read
+    // Users are initialized before streams, so we can't get the streams
+    // at the time of initialization
+    public void init() {
+        if (streamIds == null)
+            return;
+
+        streams = new ArrayList<>();
+        for (int sId : streamIds) {
+            Stream stream = AppManager.getInstance().getStream(sId);
+            if (stream != null)
+                streams.add(stream);
+        }
     }
 
     public int getId() {
@@ -28,20 +44,21 @@ public class User implements Listable {
         return name;
     }
 
-    public List<Integer> getStreams() {
+    public List<Stream> getStreams() {
         return streams;
     }
 
     @Override
     public void list() {
-        AppManager manager = AppManager.getInstance();
-        List<Stream> streamList = new ArrayList<>();
-        for (int streamId : this.streams) {
-            Stream stream = manager.getStream(streamId);
-            if (stream != null)
-                streamList.add(stream);
-        }
         JSONWriter writer = new JSONWriter();
-        writer.writeToStdout(streamList);
+        writer.writeToStdout(streams);
+    }
+
+    public void removeStreamFromHistory(int id) {
+        streams.remove(id);
+    }
+
+    public void listen(Stream stream) {
+        streams.add(stream);
     }
 }

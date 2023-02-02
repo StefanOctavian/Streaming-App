@@ -4,8 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+@SuppressWarnings("java:S125")
 public class ProiectPOO {
-
     private static Path streamersPath;
     private static Path streamsPath;
     private static Path usersPath;
@@ -54,9 +54,14 @@ public class ProiectPOO {
         appManager.executeCommands();
     }
 
+    public static void initUsers() {
+        AppManager appManager = AppManager.getInstance();
+        appManager.initUsers();
+    }
+
     public static void main(String[] args) {
-        // String input = "inputs1/";
-        // String test = "test2/";
+        // String input = "inputs2/";
+        // String test = "test7/";
         // args = new String[] { 
         //     input + "streamers.csv", 
         //     input + "streams.csv", 
@@ -81,6 +86,7 @@ public class ProiectPOO {
         handleUsers();
         handleStreamers();
         handleStreams();
+        initUsers();
         handleCommands();
     }
 }

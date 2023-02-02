@@ -21,6 +21,8 @@ public class AppManager {
         return instance;
     }
 
+    // users
+
     public void addUser(User user) {
         users.put(user.getId(), user);
     }
@@ -34,18 +36,23 @@ public class AppManager {
         return users.get(id);
     }
 
+    // streams
+
     class CorruptedStreamException extends RuntimeException {
         public CorruptedStreamException(String message) {
             super("Dirty or corrupted stream data: " + message);
+        }
+
+        public CorruptedStreamException(int streamerId) {
+            this("Streamer with id " + streamerId + " does not exist");
         }
     }
 
     public void addStream(Stream stream) {
         Streamer streamer = streamers.get(stream.getStreamerId());
         if (streamer == null)
-            throw new CorruptedStreamException(
-                "Streamer with id " + stream.getStreamerId() + " does not exist"
-            );
+            throw new CorruptedStreamException(stream.getStreamerId());
+
         streams.put(stream.getId(), stream);
         streamer.addStream(stream);
     }
@@ -59,6 +66,23 @@ public class AppManager {
         return streams.get(id);
     }
 
+    public void removeStream(int id) {
+        Stream stream = streams.get(id);
+        if (stream == null)
+            return;
+        Streamer streamer = streamers.get(stream.getStreamerId());
+        if (streamer == null)
+            throw new CorruptedStreamException(stream.getStreamerId());
+
+        streamer.removeStream(stream);
+        for (User user : users.values())
+            user.removeStreamFromHistory(id);
+
+        streams.remove(id);
+    }
+
+    // streamers
+
     public void addStreamer(Streamer streamer) {
         streamers.put(streamer.getId(), streamer);
     }
@@ -71,6 +95,8 @@ public class AppManager {
     public Streamer getStreamer(int id) {
         return streamers.get(id);
     }
+
+    // commands
 
     public void addCommand(String command) {
         commands.add(command);
@@ -99,13 +125,13 @@ public class AppManager {
             }
 
             Command command = null;
-            
+
             switch (data.getName()) {
                 case "ADD" -> command = new AddCommand(data);
                 case "LIST" -> command = new ListCommand(data);
-                // case "DELETE" -> command = new DeleteCommand(data);
-                // case "LISTEN" -> command = new ListenCommand(data);
-                // case "RECCOMEND" -> command = new RecommendCommand(data);
+                case "DELETE" -> command = new DeleteCommand(data);
+                case "LISTEN" -> command = new ListenCommand(data);
+                case "RECOMMEND" -> command = new RecommendCommand(data);
                 // case "SURPRISE" -> command = new SurpriseCommand(data);
                 default -> System.out.println("Invalid command");
             }
@@ -113,5 +139,10 @@ public class AppManager {
             if (command != null)
                 command.execute();
         }
+    }
+
+    public void initUsers() {
+        for (User user : users.values())
+            user.init();
     }
 }
