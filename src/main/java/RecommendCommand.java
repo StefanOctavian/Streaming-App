@@ -1,6 +1,12 @@
 public class RecommendCommand extends Command {
-    public RecommendCommand(CommandData data) {
+    public enum Algo {
+        PREFFERENCE, SURPRISE
+    }
+    private final Algo algorithm;
+
+    public RecommendCommand(CommandData data, Algo algorithm) {
         super(data);
+        this.algorithm = algorithm;
     }
     
     @Override
@@ -14,6 +20,9 @@ public class RecommendCommand extends Command {
             return;
 
         Recommender recommender = new Recommender(user, type);
-        recommender.recommend();
+        if (algorithm == Algo.PREFFERENCE)
+            recommender.recommendByPrefference();
+        else if (algorithm == Algo.SURPRISE)
+            recommender.recommendBySurprise();
     }
 }

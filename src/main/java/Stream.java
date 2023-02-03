@@ -18,7 +18,7 @@ public class Stream implements Comparable<Stream> {
     private long numStreams;
 
     public enum Type {
-        MUSIC, PODCAST, AUDIOBOOK;
+        SONG, PODCAST, AUDIOBOOK;
 
         public static final int COUNT = 3;
         private static final Type[] VALUES = Type.values();

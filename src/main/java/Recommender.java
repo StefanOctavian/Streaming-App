@@ -1,9 +1,12 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Recommender {
     private User user;
@@ -14,19 +17,17 @@ public class Recommender {
         this.type = type;
     }
 
-    public void recommend() {
-        Set<Stream> listenedStreams = new HashSet<>(user.getStreams());
-        List<Streamer> streamers = user.getStreams().stream().map(stream ->
-            AppManager.getInstance().getStreamer(stream.getStreamerId())
-        ).filter(streamer -> streamer.getType().toString().equals(this.type)).toList();
-
-        Queue<Stream> orderedStreams = new PriorityQueue<>();
+    public void customRecommend(final int maxRecs, Set<Streamer> streamers,
+    Comparator<Stream> comparator, Predicate<Stream> filter) {
+        Queue<Stream> orderedStreams = new PriorityQueue<>(comparator.reversed());
         for (Streamer streamer : streamers) {
-            Queue<Stream> streamerStreams = new PriorityQueue<>(streamer.getStreams());
-            int count = 5;
-            while (count > 0 && !streamerStreams.isEmpty()) {
-                Stream stream = streamerStreams.remove();
-                if (!listenedStreams.contains(stream)) {
+            List<Stream> streamerStreams = new ArrayList<>(streamer.getStreams());
+            streamerStreams.sort(comparator.reversed());
+            int count = maxRecs;
+            int size = streamerStreams.size();
+            for (int i = 0; (i < size) && (count > 0); ++i) {
+                Stream stream = streamerStreams.get(i);
+                if (filter == null || !filter.test(stream)) {
                     orderedStreams.add(stream);
                     --count;
                 }
@@ -34,10 +35,47 @@ public class Recommender {
         }
 
         List<Stream> streams = new ArrayList<>();
-        for (int i = 0; (i < 5) && (!orderedStreams.isEmpty()); ++i)
+        for (int i = 0; (i < maxRecs) && (!orderedStreams.isEmpty()); ++i)
             streams.add(orderedStreams.remove());
 
         JSONWriter writer = new JSONWriter();
         writer.writeToStdout(streams);
+    }
+
+    public void customRecommend(final int maxRecs, Set<Streamer> streamers,
+    Comparator<Stream> comparator) {
+        customRecommend(maxRecs, streamers, comparator, null);
+    }
+
+    public void recommendByPrefference() {
+        Set<Stream> listenedStreams = new HashSet<>(user.getStreams());
+        Set<Streamer> streamers = user.getStreams().stream().map(stream ->
+            AppManager.getInstance().getStreamer(stream.getStreamerId())
+        ).filter(streamer -> 
+            streamer.getType().toString().equals(this.type)
+        ).collect(Collectors.toSet());
+
+        customRecommend(5, streamers, 
+            Comparator.naturalOrder(), 
+            listenedStreams::contains
+        );
+    }
+
+    public void recommendBySurprise() {
+        Set<Streamer> listenedStreamers = user.getStreams().stream().map(stream ->
+            AppManager.getInstance().getStreamer(stream.getStreamerId())
+        ).collect(Collectors.toSet());
+        Set<Streamer> streamers = AppManager.getInstance().getStreamers().stream()
+        .filter(streamer ->
+            streamer.getType().toString().equals(this.type) &&
+            !listenedStreamers.contains(streamer)
+        ).collect(Collectors.toSet());
+
+        customRecommend(3, streamers, (s1, s2) -> {
+            int dateDiff = s1.getDateAdded().compareTo(s2.getDateAdded());
+            if (dateDiff != 0)
+                return dateDiff;
+            return s1.compareTo(s2);
+        });
     }
 }

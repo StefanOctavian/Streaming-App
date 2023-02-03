@@ -1,8 +1,10 @@
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("java:S125")
 public class AppManager {
@@ -96,6 +98,10 @@ public class AppManager {
         return streamers.get(id);
     }
 
+    public Set<Streamer> getStreamers() {
+        return new HashSet<>(streamers.values());
+    }
+
     // commands
 
     public void addCommand(String command) {
@@ -131,8 +137,10 @@ public class AppManager {
                 case "LIST" -> command = new ListCommand(data);
                 case "DELETE" -> command = new DeleteCommand(data);
                 case "LISTEN" -> command = new ListenCommand(data);
-                case "RECOMMEND" -> command = new RecommendCommand(data);
-                // case "SURPRISE" -> command = new SurpriseCommand(data);
+                case "RECOMMEND" -> command = new RecommendCommand(data, 
+                    RecommendCommand.Algo.PREFFERENCE);
+                case "SURPRISE" -> command = new RecommendCommand(data, 
+                    RecommendCommand.Algo.SURPRISE);
                 default -> System.out.println("Invalid command");
             }
 
@@ -144,5 +152,12 @@ public class AppManager {
     public void initUsers() {
         for (User user : users.values())
             user.init();
+    }
+
+    public void clearAll() {
+        users.clear();
+        streams.clear();
+        streamers.clear();
+        commands.clear();
     }
 }

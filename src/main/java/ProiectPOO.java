@@ -59,15 +59,12 @@ public class ProiectPOO {
         appManager.initUsers();
     }
 
+    public static void finnish() {
+        AppManager appManager = AppManager.getInstance();
+        appManager.clearAll();
+    }
+
     public static void main(String[] args) {
-        // String input = "inputs2/";
-        // String test = "test7/";
-        // args = new String[] { 
-        //     input + "streamers.csv", 
-        //     input + "streams.csv", 
-        //     input + "users.csv", 
-        //     test + "commands.txt"
-        // };
         if (args == null) {
             System.out.println("Nothing to read here");
             return;
@@ -88,5 +85,7 @@ public class ProiectPOO {
         handleStreams();
         initUsers();
         handleCommands();
+
+        finnish();
     }
 }

@@ -12,7 +12,7 @@ public class StreamBuilder {
 
     public void reset() {
         this.id = 0;
-        this.type = Stream.Type.MUSIC;
+        this.type = Stream.Type.SONG;
         this.genre = Stream.Genre.Music.POP;
         this.streamerId = 0;
         this.length = 0;
@@ -26,7 +26,7 @@ public class StreamBuilder {
         if (genre < 1)
             return false;
         switch (type) {
-            case MUSIC:
+            case SONG:
                 return genre <= Stream.Genre.Music.COUNT;
             case PODCAST:
                 return genre <= Stream.Genre.Podcast.COUNT;
@@ -58,7 +58,7 @@ public class StreamBuilder {
             throw new IllegalArgumentException("Invalid genre");
 
         switch (type) {
-            case MUSIC:
+            case SONG:
                 return Stream.Genre.Music.fromInt(genre);
             case PODCAST:
                 return Stream.Genre.Podcast.fromInt(genre);
