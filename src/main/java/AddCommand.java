@@ -1,3 +1,4 @@
+import java.util.Date;
 import java.util.List;
 
 public class AddCommand extends Command {
@@ -14,6 +15,7 @@ public class AddCommand extends Command {
             .setLength(length)
             .setName(name)
             .setStreamerId(data.getId())
+            .setDateAdded(new Date().getTime())
             .build();
         AppManager.getInstance().addStream(stream);
     }

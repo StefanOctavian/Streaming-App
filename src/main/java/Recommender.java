@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -6,7 +7,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Recommender {
     private User user;
@@ -49,11 +49,14 @@ public class Recommender {
 
     public void recommendByPrefference() {
         Set<Stream> listenedStreams = new HashSet<>(user.getStreams());
-        Set<Streamer> streamers = user.getStreams().stream().map(stream ->
-            AppManager.getInstance().getStreamer(stream.getStreamerId())
-        ).filter(streamer -> 
-            streamer.getType().toString().equals(this.type)
-        ).collect(Collectors.toSet());
+        Set<Streamer> streamers = new HashSet<>();
+        Collections.addAll(streamers, 
+            user.getStreams().stream().map(stream ->
+                AppManager.getInstance().getStreamer(stream.getStreamerId())
+            ).filter(streamer -> 
+                streamer.getType().toString().equals(this.type)
+            ).toArray(Streamer[]::new)
+        );
 
         customRecommend(5, streamers, 
             Comparator.naturalOrder(), 
@@ -62,14 +65,20 @@ public class Recommender {
     }
 
     public void recommendBySurprise() {
-        Set<Streamer> listenedStreamers = user.getStreams().stream().map(stream ->
-            AppManager.getInstance().getStreamer(stream.getStreamerId())
-        ).collect(Collectors.toSet());
-        Set<Streamer> streamers = AppManager.getInstance().getStreamers().stream()
-        .filter(streamer ->
-            streamer.getType().toString().equals(this.type) &&
-            !listenedStreamers.contains(streamer)
-        ).collect(Collectors.toSet());
+        Set<Streamer> listenedStreamers = new HashSet<>();
+        Collections.addAll(listenedStreamers, 
+            user.getStreams().stream().map(stream ->
+                AppManager.getInstance().getStreamer(stream.getStreamerId())
+            ).toArray(Streamer[]::new)
+        );
+
+        Set<Streamer> streamers = new HashSet<>();
+        Collections.addAll(streamers, 
+            AppManager.getInstance().getStreamers().stream().filter(streamer ->
+                streamer.getType().toString().equals(this.type) &&
+                !listenedStreamers.contains(streamer)
+            ).toArray(Streamer[]::new)
+        );
 
         customRecommend(3, streamers, (s1, s2) -> {
             int dateDiff = s1.getDateAdded().compareTo(s2.getDateAdded());

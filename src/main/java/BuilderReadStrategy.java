@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class BuilderReadStrategy<B, R> implements CsvReadStrategy<B, R> {
@@ -14,8 +15,9 @@ public class BuilderReadStrategy<B, R> implements CsvReadStrategy<B, R> {
 
     @Override
     public List<R> construct(List<B> beans) {
-        return beans.stream()
-            .map(builder::apply)
-            .collect(Collectors.toList());
+        List<R> result = new ArrayList<>();
+        for (B bean : beans)
+            result.add(builder.apply(bean));
+        return result;
     }
 }
