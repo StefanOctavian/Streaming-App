@@ -133,15 +133,26 @@ public class AppManager {
             Command command = null;
 
             switch (data.getName()) {
-                case "ADD" -> command = new AddCommand(data);
-                case "LIST" -> command = new ListCommand(data);
-                case "DELETE" -> command = new DeleteCommand(data);
-                case "LISTEN" -> command = new ListenCommand(data);
-                case "RECOMMEND" -> command = new RecommendCommand(data, 
-                    RecommendCommand.Algo.PREFFERENCE);
-                case "SURPRISE" -> command = new RecommendCommand(data, 
-                    RecommendCommand.Algo.SURPRISE);
-                default -> System.out.println("Invalid command");
+                case "ADD":
+                    command = new AddCommand(data);
+                    break;
+                case "LIST":
+                    command = new ListCommand(data);
+                    break;
+                case "DELETE":
+                    command = new DeleteCommand(data);
+                    break;
+                case "LISTEN":
+                    command = new ListenCommand(data);
+                    break;
+                case "RECOMMEND":
+                    command = new RecommendCommand(data, RecommendCommand.Algo.PREFFERENCE);
+                    break;
+                case "SURPRISE":
+                    command = new RecommendCommand(data, RecommendCommand.Algo.SURPRISE);
+                    break;
+                default:
+                    System.out.println("Invalid command");
             }
 
             if (command != null)
