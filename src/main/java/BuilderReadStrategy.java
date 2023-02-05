@@ -16,6 +16,6 @@ public class BuilderReadStrategy<B, R> implements CsvReadStrategy<B, R> {
     public List<R> construct(List<B> beans) {
         return beans.stream()
             .map(builder::apply)
-            .toList();
+            .collect(Collectors.toList());
     }
 }
