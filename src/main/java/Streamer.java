@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.opencsv.bean.CsvBindByName;
@@ -47,7 +48,9 @@ public class Streamer implements Listable {
     @Override
     public void list() {
         JSONWriter writer = new JSONWriter();
-        writer.writeToStdout(this.streams);
+        List<Stream> streamsReversed = new ArrayList<>(streams);
+        Collections.reverse(streamsReversed);
+        writer.writeToStdout(streamsReversed);
     }
 
     public void removeStream(Stream stream) {

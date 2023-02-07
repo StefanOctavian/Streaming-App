@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.opencsv.bean.CsvBindAndSplitByName;
@@ -51,11 +52,14 @@ public class User implements Listable {
     @Override
     public void list() {
         JSONWriter writer = new JSONWriter();
+        List<Stream> streamsReversed = new ArrayList<>(streams);
+        Collections.reverse(streamsReversed);
         writer.writeToStdout(streams);
     }
 
     public void removeStreamFromHistory(int id) {
-        streams.remove(id);
+        streamIds.remove(id);
+        streams.remove(new StreamBuilder().setId(id).build());
     }
 
     public void listen(Stream stream) {
