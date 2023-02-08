@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@SuppressWarnings("java:S125")
 public class ProiectPOO {
     private static Path streamersPath;
     private static Path streamsPath;

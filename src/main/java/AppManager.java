@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@SuppressWarnings("java:S125")
 public class AppManager {
     private static AppManager instance = null;
     private static Map<Integer, Streamer> streamers = new HashMap<>();
